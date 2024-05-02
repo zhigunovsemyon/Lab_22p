@@ -17,7 +17,7 @@ int main(void)
 	char String[MAXLEN];
 	*String = 0; //Установка первым символом терминального
 	do
-	{
+	{	//Функция выбора действия пользователем
 		switch (Switcher(String))
 		{
 		case QUIT: //q
@@ -25,13 +25,13 @@ int main(void)
 
 		case KEYBOARD://k
 			puts("Введите текст:");
-			fgets(String, MAXLEN, stdin);
-			if (*String == '\n')	//Если пользователь нажал Enter, не введя ничего
-				*String = 0;		//строка зануляется
+			fgets(String, MAXLEN, stdin);	//Ввод пользователем
+			if (*String == '\n')			//Если пользователь нажал Enter, не введя ничего
+				*String = 0;				//строка зануляется
 			break;
 
 		case READ_FILE: //f
-			GetAndReadFile(String);
+			GetAndReadFile(String);	//Ввод пользователем названия файла, открытие его, чтение
 			break;
 
 		case REMOVE: //d
@@ -63,18 +63,22 @@ int main(void)
 }
 //Удаление блока /**/
 void RemoveCommentBlock(char String[])
-{	
+{	//Если строка закончилась, функция завершается
 	if (!(*String))
 		return;
-	if (strncmp(String, "/*", 2)/*!= 0*/)
-		return RemoveCommentBlock(++String);
+
+	/*Сравнение с символами открытия блока*/
+	if (strncmp(String, "/*", 2)/*!= 0*/)	//Пока символы не встречены
+		return RemoveCommentBlock(++String);//Осуществляется повторный запуск со сдвигом на символ
 
 	uint16_t i = 2;	//Номер символа перематывается до момента, пока String[i] не будет равна *
 	while(String[i] && strncmp(String + i, "*/", 2)/*!=0*/)
 		i++;
 		
-	if (String[i])	//Если String[i] = 0, то memmove скопирует этот терминальный символ
+	if (String[i])	//Если String[i] = '\0', то memmove скопирует этот терминальный символ
 		i += 2;		//Если секция кончилась */ то i переставляется на символ после блока
+
+	//Копирование символов, идущих после String[i] на место String[0...]
 	memmove(String, String + i, strlen(String + i) + 1);
 
 	//Повторное удаление следующего блока
@@ -103,7 +107,7 @@ uint8_t CountMaxSpace(char String[])
 	uint32_t max = 0, count = 0;
 	for (uint32_t i = 0; String[i]; ++i)//Цикл перебирает строку, пока она не закончится
 	{
-		if (String[i] != ' ')
+		if (String[i] != ' ')	//Перебор i до первого пробела
 			continue;
 
 		/*else*/
@@ -138,7 +142,7 @@ void GetAndReadFile(char String[])
 	printf("Введите открываемый файл: ");
 	scanf(SCANF_SPEC_S, String);
 	f = fopen(String, "rb");
-	if (!f)
+	if (!f)	//Если не удалось открыть файл
 	{
 		puts("Не удалось открыть файл!");
 		*String = 0; //Установка первым символом терминального
@@ -169,7 +173,7 @@ uint8_t Switcher(char String[])
 			"Чтобы сосчитать наибольшую последовательность пробелов, введите s\n");
 	}
 	do
-	{
+	{	//Ввод пользователем символа
 		switch (getchar())
 		{
 		case 'q':

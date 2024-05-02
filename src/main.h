@@ -3,8 +3,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAXLEN 2560
-#define SCANF_SPEC_S "%2559s"
+#define MAXLEN 256
+#define SCANF_SPEC_S "%255s"
 
 enum Switches
 {
